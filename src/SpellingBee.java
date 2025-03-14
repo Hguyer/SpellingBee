@@ -22,7 +22,7 @@ import java.util.Scanner;
  * It utilizes recursion to generate the strings, mergesort to sort them, and
  * binary search to find them in a dictionary.
  *
- * @author Zach Blick, [ADD YOUR NAME HERE]
+ * @author Hunter Guyer
  *
  * Written on March 5, 2023 for CS2 @ Menlo School
  *
@@ -45,12 +45,48 @@ public class SpellingBee {
     //  that will find the substrings recursively.
     public void generate() {
         // YOUR CODE HERE — Call your recursive method!
+        generateHelper("", letters);
+    }
+    public void generateHelper(String current, String remaining){
+        if(!current.isEmpty()){
+            words.add(remaining);
+        }
+        // Recursively generate all permutations using remaining letters
+        for (int i = 0; i < remaining.length(); i++) {
+            // Take current letter and recurse with remaining letters
+            String newCurrent = current + remaining.charAt(i);
+            String newRemaining = remaining.substring(0, i) + remaining.substring(i + 1);
+            generateHelper(newCurrent, newRemaining);
+        }
+
     }
 
     // TODO: Apply mergesort to sort all words. Do this by calling ANOTHER method
     //  that will find the substrings recursively.
     public void sort() {
         // YOUR CODE HERE
+        mergeSort(words, 0, words.size() - 1);
+    }
+    private void mergeSort(ArrayList<String> list, int low, int high) {
+        if (low >= high) {
+            return;
+        }
+
+        int mid = low + (high - low) / 2;
+
+        mergeSort(list, low, mid);
+        mergeSort(list, mid + 1, high);
+
+        merge(list, low, mid, high);
+    }
+    private ArrayList<String> merge(ArrayList<String> list, int low, int mid, int high) {
+        ArrayList<String> temp = new ArrayList<>();
+        int left = low;
+        int right = mid + 1;
+
+        while (left <= mid && right <= high) {
+            if(list.get(left))
+        }
     }
 
     // Removes duplicates from the sorted list.
