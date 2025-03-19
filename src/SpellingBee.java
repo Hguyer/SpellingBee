@@ -48,14 +48,17 @@ public class SpellingBee {
         generateHelper("", letters);
     }
     public void generateHelper(String current, String remaining){
+        // Add the current string to words if it's not empty
         if(!current.isEmpty()){
-            words.add(remaining);
+            words.add(current);
         }
-        // Recursively generate all permutations using remaining letters
+        // generate all possible permutations by recursively adding each letter
         for (int i = 0; i < remaining.length(); i++) {
-            // Take current letter and recurse with remaining letters
+            // Add the current character to the new string
             String newCurrent = current + remaining.charAt(i);
+            // remove the used character and create a new remaining string
             String newRemaining = remaining.substring(0, i) + remaining.substring(i + 1);
+            // Recursively call generateHelper with the updated strings
             generateHelper(newCurrent, newRemaining);
         }
 
@@ -65,28 +68,52 @@ public class SpellingBee {
     //  that will find the substrings recursively.
     public void sort() {
         // YOUR CODE HERE
+        // mergesort function
         mergeSort(words, 0, words.size() - 1);
     }
     private void mergeSort(ArrayList<String> list, int low, int high) {
+        // base case for splitting
         if (low >= high) {
             return;
         }
 
         int mid = low + (high - low) / 2;
-
+        //recursively split the arrayList
         mergeSort(list, low, mid);
         mergeSort(list, mid + 1, high);
 
+        // now merge
         merge(list, low, mid, high);
     }
     private ArrayList<String> merge(ArrayList<String> list, int low, int mid, int high) {
+        // add a temp arrayList for comperisons
         ArrayList<String> temp = new ArrayList<>();
         int left = low;
         int right = mid + 1;
 
+        // compare and merge from both halves
         while (left <= mid && right <= high) {
-            if(list.get(left))
+            // if the left is smaller put it first otherwise add the right
+            if (list.get(left).compareTo(list.get(right)) <= 0) {
+                temp.add(list.get(left++));
+            } else {
+                temp.add(list.get(right++));
+            }
         }
+        // add all of the left remaining
+        while (left <= mid) {
+            temp.add(list.get(left++));
+        }
+        // add all of the right
+        while (right <= high) {
+            temp.add(list.get(right++));
+        }
+        // copy everything back into list but sorted
+        for (int i = 0; i < temp.size(); i++) {
+            list.set(low + i, temp.get(i));
+        }
+
+        return list;
     }
 
     // Removes duplicates from the sorted list.
@@ -105,6 +132,34 @@ public class SpellingBee {
     //  If it is not in the dictionary, remove it from words.
     public void checkWords() {
         // YOUR CODE HERE
+        // use binary search to check the dictionary for words and if it isn't in it remove it
+        for (int i = words.size() - 1; i >= 0; i--) {
+            if (!binarySearch(words.get(i))) {
+                words.remove(i);
+            }
+        }
+    }
+    private boolean binarySearch(String word) {
+        int left = 0;
+        int right = DICTIONARY.length - 1;
+
+        while (left <= right) {
+            // get the middle index
+            int mid = left + (right - left) / 2;
+            // compear the target word to the word at the middle
+            int comparison = word.compareTo(DICTIONARY[mid]);
+            // if they are the same return true
+            if (comparison == 0) {
+                return true;
+            }
+            // otherwise search the left and right halves
+            else if (comparison < 0) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return false;
     }
 
     // Prints all valid words to wordList.txt
